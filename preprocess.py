@@ -51,10 +51,9 @@ def process_sales_data(data):
     shipments_by_warehouse = filtered_data.groupby('Ship Warehouse')['Quantity Shipped'].sum().sort_values(ascending=False)
     shipments_by_code = filtered_data['Ship Code'].value_counts()
     
-    # 7. Customer Retention (Customers who placed repeat orders)
-    customer_order_counts = filtered_data.groupby('Customer ID')['Order ID'].nunique()
-    repeat_customers = customer_order_counts[customer_order_counts > 1]
-    retention_rate = len(repeat_customers) / len(customer_order_counts)
+    # 7. Customers who returned the most items
+    customer_return_counts = filtered_data.groupby('Customer ID')['Quantity  Returned'].sum()
+    top_customers_by_returns = customer_return_counts.nlargest(5)
     
     # 8. Late Shipments Count
     late_shipments_count = filtered_data['Shipped Late'].sum()
@@ -68,10 +67,10 @@ def process_sales_data(data):
         f"Year-to-Date Sales Totals:\n{ytd_totals.to_string()}",
         f"Average Order Values:\n" + "\n".join([f"{period}: ${average_order_values[period]:.2f}" for period in average_order_values]),
         f"Top 5 Customers by Total Spending:\n{top_customers_by_spending.to_string()}",
+        f"Top 5 Customers by Total Returns:\n{top_customers_by_returns.to_string()}",
         f"Return Rates by Product:\n{return_rates.to_string()}",
         f"Shipments by Warehouse:\n{shipments_by_warehouse.to_string()}",
         f"Shipments by Ship Code:\n{shipments_by_code.to_string()}",
-        f"Customer Retention Rate: {retention_rate:.2%}",
         f"Total Late Shipments: {late_shipments_count}",
         f"Most Frequent Unit of Measure: {most_frequent_uom}",
     ]

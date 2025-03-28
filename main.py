@@ -12,7 +12,11 @@ from preprocess import process_sales_data
 def load_data():
     @st.cache_data
     def inner_load_data():
-        return pd.read_excel("sales_data.xlsx") if os.path.exists("sales_data.xlsx") else pd.DataFrame()
+        if os.path.exists("sales_data.xlsx"):
+            return pd.read_excel("sales_data.xlsx")
+        else:
+            st.error("Oops! It seems the sales data file is missing. Please check the file path.")
+            return pd.DataFrame()
     return inner_load_data()
 
 def get_vector_store(data, faiss_index_path):
@@ -48,33 +52,32 @@ def process_user_question(user_question, faiss_index_path):
 def get_conversational_chain(api_key):
     @st.cache_resource
     def inner_get_conversational_chain(api_key):
-        prompt_template = """
-                As a **business intelligence expert** in the pharmaceutical supply chain, please provide **detailed and insightful answers** to the following questions. Ensure that your responses demonstrate a **thorough understanding** of **data analysis, visualization, and business strategy**. Support your answers with **relevant data or examples** where appropriate.
-                
+        prompt_template ="""
+                As a **business intelligence expert** in the pharmaceutical supply chain, provide **insightful answers** to the following questions. Ensure your responses show a **thorough understanding** of **data analysis, visualization, and business strategy**. Support your answers with **relevant data or examples**.
+
+                Provide a **concise and accurate answer**.
+                Include **relevant metrics and data points**.
+
+                **Insights:**
+                - **Summarize significant trends** in the data.
+                - **Highlight notable changes or patterns** over time.
+
+                **Data Table:**
+                - Present a **clear table of relevant sales figures** based on user input. If the user specifies a number, provide that many rows; otherwise, default to showing the top 5 items.
+
+                **Business Impact (if applicable):**
+                - Discuss the **implications of these trends**.
+                - **Compare findings with historical data**.
+
+                **Recommendations:**
+                - Offer **actionable recommendations** based on the analysis.
+
+                **No illustrations needed.**
+
                 **Context:**\n{context}\n
                 **Question:** \n{question}\n
-                
-                **Answer:**
-                - Provide a **concise and accurate answer** to the question posed.
-                - Include **relevant metrics and data points** to support your answer.
-                - For **Q&A-type questions**, adapt the answer length to meet the needs (keep it precise but informative).
-                - For **business-oriented questions**, limit the answer to **10 lines**, focusing on insights, business impact, and actionable recommendations.
-                - **Insights:**
-                  - **Summarize significant trends** observed in the data.
-                  - **Highlight notable changes or patterns** over time.
-                
-                - **Business Impact (if applicable):**
-                  - Discuss the **implications of these trends on the business**.
-                  - **Compare findings with historical data** where relevant.
-                
-                - **Recommendations:**
-                  - Offer **actionable recommendations** based on the analysis.
-                
-                **Data Table:**
-                - Present a **clear table of relevant sales figures** or data points based on the user's request. The table should directly follow the answer.
-                
-                **Illustrations are not necessary.**
-                """
+            **Answer:**
+            """
 
         model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.8, google_api_key=api_key)
         prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
@@ -92,7 +95,8 @@ def main():
 
     # Center title and subheading
     st.markdown("<h1 style='text-align: center;'>Conversational Business Intelligence Chatbot</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>Ask your questions about the Pharmaceutical Supply Chain Data below:</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center;'>Ask your questions about the  Pharmaceutical Supply Chain Data below:</p>", unsafe_allow_html=True)
+
 
     # Change theme to white
     st.markdown(

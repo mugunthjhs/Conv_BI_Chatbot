@@ -53,26 +53,26 @@ def get_conversational_chain(api_key):
     @st.cache_resource
     def inner_get_conversational_chain(api_key):
         prompt_template ="""
-                As a **business intelligence expert** in the pharmaceutical supply chain, provide **insightful answers** to the following questions. Ensure your responses show a **thorough understanding** of **data analysis, visualization, and business strategy**. Support your answers with **relevant data or examples**.
+                As a **business intelligence expert** in the pharmaceutical supply chain, please provide **detailed and insightful answers** to the following questions. Ensure that your responses demonstrate a **thorough understanding** of **data analysis, visualization, and business strategy**. Support your answers with **relevant data or examples** where appropriate.
 
-                Provide a **concise and accurate answer**.
-                Include **relevant metrics and data points**.
+                Provide a **concise and accurate answer** to the question posed.
+                Include **relevant metrics and data points** to support your answer.
 
                 **Insights:**
-                - **Summarize significant trends** in the data.
-                - **Highlight notable changes or patterns** over time.
+                - **Summarize significant trends** observed in the data.
+                - **Highlight any notable changes or patterns** over time.
 
                 **Data Table:**
-                - Present a **clear table of relevant sales figures** based on user input. If the user specifies a number, provide that many rows; otherwise, default to showing the top 5 items.
+                - Present a **clear table of relevant sales figures or data points** that directly relate to the question. If the user requests the top 10 items, provide 10 rows; if they request the top 5, provide 5 rows, and so on, based on their specific request.
 
                 **Business Impact (if applicable):**
-                - Discuss the **implications of these trends**.
-                - **Compare findings with historical data**.
+                - Discuss the **implications of these trends on the business**.
+                - **Compare findings with historical data** where relevant.
 
                 **Recommendations:**
                 - Offer **actionable recommendations** based on the analysis.
 
-                **No illustrations needed.**
+                **Illustrations are not necessary.**
 
                 **Context:**\n{context}\n
                 **Question:** \n{question}\n

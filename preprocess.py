@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 
-def process_sales_data(data):
+def process_sales_data(data, top_n_customers=5):
     # Convert date columns to datetime
     data['Order Date'] = pd.to_datetime(data['Order Date'], errors='coerce')
     data['Date Shipped'] = pd.to_datetime(data['Date Shipped'], errors='coerce')
@@ -39,8 +39,8 @@ def process_sales_data(data):
         else:
             average_order_values[period] = 0  # or handle as needed
     
-    # 4. Top 5 Customers by Total Spending
-    top_customers_by_spending = filtered_data.groupby('Customer ID')['Total Price'].sum().nlargest(5)
+    # 4. Top N Customers by Total Spending
+    top_customers_by_spending = filtered_data.groupby('Customer ID')['Total Price'].sum().nlargest(top_n_customers)
     
     # 5. Return Rates by Product
     return_rates = filtered_data.groupby('Item ID').agg({'Quantity  Returned': 'sum', 'Quantity Shipped': 'sum'})
@@ -53,7 +53,7 @@ def process_sales_data(data):
     
     # 7. Customers who returned the most items
     customer_return_counts = filtered_data.groupby('Customer ID')['Quantity  Returned'].sum()
-    top_customers_by_returns = customer_return_counts.nlargest(5)
+    top_customers_by_returns = customer_return_counts.nlargest(top_n_customers)
     
     # 8. Late Shipments Count
     late_shipments_count = filtered_data['Shipped Late'].sum()
@@ -66,8 +66,8 @@ def process_sales_data(data):
         f"Monthly Sales Totals:\n{monthly_totals.to_string()}",
         f"Year-to-Date Sales Totals:\n{ytd_totals.to_string()}",
         f"Average Order Values:\n" + "\n".join([f"{period}: ${average_order_values[period]:.2f}" for period in average_order_values]),
-        f"Top 5 Customers by Total Spending:\n{top_customers_by_spending.to_string()}",
-        f"Top 5 Customers by Total Returns:\n{top_customers_by_returns.to_string()}",
+        f"Top {top_n_customers} Customers by Total Spending:\n{top_customers_by_spending.to_string()}",
+        f"Top {top_n_customers} Customers by Total Returns:\n{top_customers_by_returns.to_string()}",
         f"Return Rates by Product:\n{return_rates.to_string()}",
         f"Shipments by Warehouse:\n{shipments_by_warehouse.to_string()}",
         f"Shipments by Ship Code:\n{shipments_by_code.to_string()}",

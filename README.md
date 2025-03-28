@@ -57,11 +57,3 @@ The dataset reflects sales transactions in a **pharmaceutical supply chain**. Th
    ```bash
    streamlit run main.py
    ```
-
-## 📬 Feedback & Contributions
-Feel free to fork, improve, and submit pull requests. For issues, open a GitHub issue or contact me.
-
----
-**Author:** Your Name  
-**License:** MIT
-

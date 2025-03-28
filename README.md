@@ -1,3 +1,9 @@
+# Business Analysis & Insights Presentation
+
+📄 **Presentation Link:** [Business Analysis & Insights Presentation](https://github.com/mugunthjhs/Conv_BI_Chatbot/blob/main/Powerpoint%20Presentation.pptx)
+
+---
+
 # Conversational Insights Solution
 
 This project is a **Conversational Insights Solution** designed to allow users to explore business data by asking questions and receiving meaningful insights in text or visual format. The solution is built using AI-powered natural language processing and data analytics to generate business intelligence insights.
@@ -26,7 +32,7 @@ Access the chatbot here: [Conversational Insights Solution](https://conversation
 ├── README.md            # Project documentation
 ```
 
-## 📊 Business Analysis & Insights Presentation
+## 📊 Business Analysis & Insights
 The dataset reflects sales transactions in a **pharmaceutical supply chain**. This project explores the dataset to uncover:
 - Revenue trends and sales growth
 - Customer segmentation and purchase behavior
@@ -34,8 +40,6 @@ The dataset reflects sales transactions in a **pharmaceutical supply chain**. Th
 - Shipping efficiency and delays
 - Return rates and order fulfillment insights
 - Top customers and regions by revenue
-
-A structured business presentation is prepared to communicate findings effectively.
 
 ## 🔧 Installation & Setup
 1. **Clone the Repository:**

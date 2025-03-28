@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 
-def process_sales_data(data, top_n_customers=5):
+def process_sales_data(data):
     # Convert date columns to datetime
     data['Order Date'] = pd.to_datetime(data['Order Date'], errors='coerce')
     data['Date Shipped'] = pd.to_datetime(data['Date Shipped'], errors='coerce')
@@ -28,7 +28,7 @@ def process_sales_data(data, top_n_customers=5):
     current_year = datetime.now().year
     ytd_totals = filtered_data[filtered_data['Order Date'].dt.year == current_year].groupby(filtered_data['Order Date'].dt.to_period('M'))['Total Price'].sum()
     
-    # 3. Average Order Value based on user query
+    # 3. Average Order Value
     average_order_values = {}
     for period, group in filtered_data.groupby(filtered_data['Order Date'].dt.to_period('M')):
         total_sales = group['Total Price'].sum()
@@ -39,26 +39,29 @@ def process_sales_data(data, top_n_customers=5):
         else:
             average_order_values[period] = 0  # or handle as needed
     
-    # 4. Top N Customers by Total Spending
-    top_customers_by_spending = filtered_data.groupby('Customer ID')['Total Price'].sum().nlargest(top_n_customers)
+    # 4. Top 20 Customers by Total Spending
+    top_customers_by_spending = filtered_data.groupby('Customer ID')['Total Price'].sum().nlargest(20)
     
-    # 5. Return Rates by Product
+    # 5. Bottom 20 Customers by Total Spending
+    bottom_customers_by_spending = filtered_data.groupby('Customer ID')['Total Price'].sum().nsmallest(20)
+    
+    # 6. Return Rates by Product
     return_rates = filtered_data.groupby('Item ID').agg({'Quantity  Returned': 'sum', 'Quantity Shipped': 'sum'})
     return_rates['Return Rate'] = return_rates['Quantity  Returned'] / return_rates['Quantity Shipped']
     return_rates = return_rates.sort_values(by='Return Rate', ascending=False)
     
-    # 6. Shipments by Warehouse and Ship Code
+    # 7. Shipments by Warehouse and Ship Code
     shipments_by_warehouse = filtered_data.groupby('Ship Warehouse')['Quantity Shipped'].sum().sort_values(ascending=False)
     shipments_by_code = filtered_data['Ship Code'].value_counts()
     
-    # 7. Customers who returned the most items
+    # 8. Customers who returned the most items
     customer_return_counts = filtered_data.groupby('Customer ID')['Quantity  Returned'].sum()
-    top_customers_by_returns = customer_return_counts.nlargest(top_n_customers)
+    top_customers_by_returns = customer_return_counts.nlargest(20)
     
-    # 8. Late Shipments Count
+    # 9. Late Shipments Count
     late_shipments_count = filtered_data['Shipped Late'].sum()
     
-    # 9. Most Frequent Unit of Measure
+    # 10. Most Frequent Unit of Measure
     most_frequent_uom = filtered_data[' Unit of Measure'].mode()[0]
     
     # Prepare context
@@ -66,8 +69,9 @@ def process_sales_data(data, top_n_customers=5):
         f"Monthly Sales Totals:\n{monthly_totals.to_string()}",
         f"Year-to-Date Sales Totals:\n{ytd_totals.to_string()}",
         f"Average Order Values:\n" + "\n".join([f"{period}: ${average_order_values[period]:.2f}" for period in average_order_values]),
-        f"Top {top_n_customers} Customers by Total Spending:\n{top_customers_by_spending.to_string()}",
-        f"Top {top_n_customers} Customers by Total Returns:\n{top_customers_by_returns.to_string()}",
+        f"Top 20 Customers by Total Spending:\n{top_customers_by_spending.to_string()}",
+        f"Bottom 20 Customers by Total Spending:\n{bottom_customers_by_spending.to_string()}",
+        f"Top 20 Customers by Total Returns:\n{top_customers_by_returns.to_string()}",
         f"Return Rates by Product:\n{return_rates.to_string()}",
         f"Shipments by Warehouse:\n{shipments_by_warehouse.to_string()}",
         f"Shipments by Ship Code:\n{shipments_by_code.to_string()}",

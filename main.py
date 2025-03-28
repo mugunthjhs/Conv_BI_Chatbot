@@ -52,32 +52,34 @@ def process_user_question(user_question, faiss_index_path):
 def get_conversational_chain(api_key):
     @st.cache_resource
     def inner_get_conversational_chain(api_key):
-        prompt_template ="""
+        prompt_template =prompt_template = """
                 As a **business intelligence expert** in the pharmaceutical supply chain, please provide **detailed and insightful answers** to the following questions. Ensure that your responses demonstrate a **thorough understanding** of **data analysis, visualization, and business strategy**. Support your answers with **relevant data or examples** where appropriate.
-
-                Provide a **concise and accurate answer** to the question posed.
-                Include **relevant metrics and data points** to support your answer.
-
-                **Insights:**
-                - **Summarize significant trends** observed in the data.
-                - **Highlight any notable changes or patterns** over time.
-
-                **Data Table:**
-                - Present a **clear table of relevant sales figures or data points** that directly relate to the question. If the user requests the top 10 items, provide 10 rows; if they request the top 5, provide 5 rows, and so on, based on their specific request.
-
-                **Business Impact (if applicable):**
-                - Discuss the **implications of these trends on the business**.
-                - **Compare findings with historical data** where relevant.
-
-                **Recommendations:**
-                - Offer **actionable recommendations** based on the analysis.
-
-                **Illustrations are not necessary.**
-
+                
                 **Context:**\n{context}\n
                 **Question:** \n{question}\n
-            **Answer:**
-            """
+                
+                **Answer:**
+                - Provide a **concise and accurate answer** to the question posed.
+                - Include **relevant metrics and data points** to support your answer.
+                - For **Q&A-type questions**, adapt the answer length to meet the needs (keep it precise but informative).
+                - For **business-oriented questions**, limit the answer to **10 lines**, focusing on insights, business impact, and actionable recommendations.
+                - **Insights:**
+                  - **Summarize significant trends** observed in the data.
+                  - **Highlight notable changes or patterns** over time.
+                
+                - **Business Impact (if applicable):**
+                  - Discuss the **implications of these trends on the business**.
+                  - **Compare findings with historical data** where relevant.
+                
+                - **Recommendations:**
+                  - Offer **actionable recommendations** based on the analysis.
+                
+                **Data Table:**
+                - Present a **clear table of relevant sales figures** or data points (e.g., top 5, top 10, etc.) based on the user's request. The table should directly follow the answer.
+                
+                **Illustrations are not necessary.**
+                """
+
 
         model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.8, google_api_key=api_key)
         prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
